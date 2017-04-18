@@ -1,6 +1,7 @@
 module Ha where
 
 import Parse
+import Pretty
 import Prelude hiding (exp, pure)
 
 data Prog = Prog [Eqn] 
@@ -21,7 +22,7 @@ eqn :: Parser Eqn
 eqn = Eqn .:. name .*. char ' ' *.. many (pat ..* spaces) .*. sym "=" *.. expr
 
 pat :: Parser Pat
-pat = PNil ... nil
+pat = PNil ... sym "[]"
 	.|. PVar .:. name 
     .|. PCons .:. (sym "(" *.. name ..* sym ":") .*. (name ..* sym ")")
 
@@ -38,15 +39,17 @@ app = nameOrMany .:. name .*. spaces *.. many (arg ..* spaces)
         nameOrMany n args = App n args
 
 arg :: Parser Exp
-arg = Nil ... nil
+arg = Nil ... sym "[]"
     .|. Var .:. name
     .|. sym "(" *.. expr ..* sym ")"
-     
-nil :: Parser String
-nil = sym "[]"
 
 name :: Parser Name
 name = many1 (lower .|. upper)
 
 prog :: Parser Prog
 prog = Prog .:. many1 eqn
+
+
+--- pretty printer
+prettyProg :: Int -> Prog -> String
+prettyProg i (Prog eqns) = show eqns

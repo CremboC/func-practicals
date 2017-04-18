@@ -81,4 +81,5 @@ parts :: [a] -> [[[a]]]
 parts xs = [[xs]] -- todo
 
 change :: [Int] -> Int -> [[Int]]
-change cs m = [xs]
+change xs m = [xs]
+
